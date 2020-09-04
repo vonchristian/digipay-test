@@ -1,11 +1,10 @@
 
 cash_in_bank = Accounts::Asset.create(name: 'FSG Cash in Bank', code: 1111)
 capital      = Accounts::Equity.create(name: 'Capital', code: 2222)
-
-#entry for starting capital
+fsg_agent    = Agent.create(account_name: 'FSG Agent')
+#entry for starting capital/investment
 Entry.create!(
-  commercial_document_id: "1",
-  commercial_document_type: "Customer",
+  commercial_document: fsg_agent,
   reference_number: 'investment',
   description: 'Initial Investment',
   entry_date: Date.current,
