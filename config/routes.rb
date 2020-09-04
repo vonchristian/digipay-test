@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :transactions,  only: [:index, :show]
+      resources :virtual_money_accounts, only: [:index]
       resources :agents, only: [:show] do
         resources :deposits,    only: [:create], module: :agents_module
         resources :withdrawals, only: [:create], module: :agents_module
