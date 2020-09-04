@@ -4,6 +4,8 @@ Rails.application.routes.draw do
       resources :transactions,  only: [:index, :show]
       resources :agents, only: [:show] do
         resources :deposits,    only: [:create], module: :agents_module
+        resources :withdrawals, only: [:create], module: :agents_module
+      end
       end
     end
   end
