@@ -13,5 +13,11 @@ Rails.application.routes.draw do
       end
     end
   end
+  namespace :admin do
+    resources :financial_institutions, only: [:create], defaults: { format: :json }
+  end
+  namespace :financial do
+    resources :members, only: [:index], defaults: { format: :json }
+  end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

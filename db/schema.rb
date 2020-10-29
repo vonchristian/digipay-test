@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_04_012111) do
+ActiveRecord::Schema.define(version: 2020_10_14_213314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -68,6 +68,14 @@ ActiveRecord::Schema.define(version: 2020_09_04_012111) do
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_entries"
   end
 
+  create_table "financial_institutions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "category"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["category"], name: "index_financial_institutions_on_category"
+  end
+
   create_table "virtual_money_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "depositor_type", null: false
     t.uuid "depositor_id", null: false
@@ -80,7 +88,33 @@ ActiveRecord::Schema.define(version: 2020_09_04_012111) do
     t.index ["liability_account_id"], name: "index_virtual_money_accounts_on_liability_account_id"
   end
 
+  create_table "voucher_amounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "type"
+    t.uuid "account_id", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "amount_currency", default: "USD", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_voucher_amounts_on_account_id"
+    t.index ["type"], name: "index_voucher_amounts_on_type"
+  end
+
+  create_table "vouchers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "reference_number"
+    t.datetime "entry_date"
+    t.time "entry_time"
+    t.uuid "entry_id", null: false
+    t.string "commercial_document_type", null: false
+    t.uuid "commercial_document_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_vouchers"
+    t.index ["entry_id"], name: "index_vouchers_on_entry_id"
+  end
+
   add_foreign_key "amounts", "accounts"
   add_foreign_key "amounts", "entries"
   add_foreign_key "virtual_money_accounts", "accounts", column: "liability_account_id"
+  add_foreign_key "voucher_amounts", "accounts"
+  add_foreign_key "vouchers", "entries"
 end
