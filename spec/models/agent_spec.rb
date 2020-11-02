@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Agent do
   describe 'associations' do
-    it { is_expected.to have_one :virtual_money_account }
+    it { is_expected.to have_one :wallet }
   end
 
   describe 'validations' do

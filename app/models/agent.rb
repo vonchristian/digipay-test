@@ -1,5 +1,6 @@
 class Agent < ApplicationRecord
-  has_one :virtual_money_account, as: :depositor
+  has_one :wallet, as: :account_owner
+
   validates :account_name, presence: true, uniqueness: true
 
   def name

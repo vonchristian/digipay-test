@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_14_213314) do
+ActiveRecord::Schema.define(version: 2020_11_01_235657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2020_10_14_213314) do
     t.string "reference_number"
     t.datetime "entry_date"
     t.time "entry_time"
-    t.uuid "entry_id", null: false
+    t.uuid "entry_id"
     t.string "commercial_document_type", null: false
     t.uuid "commercial_document_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -112,9 +112,21 @@ ActiveRecord::Schema.define(version: 2020_10_14_213314) do
     t.index ["entry_id"], name: "index_vouchers_on_entry_id"
   end
 
+  create_table "wallets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.uuid "virtual_money_account_id", null: false
+    t.uuid "account_owner_id", null: false
+    t.string "account_number", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_owner_id"], name: "index_wallets_on_account_owner_id"
+    t.index ["virtual_money_account_id"], name: "index_wallets_on_virtual_money_account_id"
+  end
+
   add_foreign_key "amounts", "accounts"
   add_foreign_key "amounts", "entries"
   add_foreign_key "virtual_money_accounts", "accounts", column: "liability_account_id"
   add_foreign_key "voucher_amounts", "accounts"
   add_foreign_key "vouchers", "entries"
+  add_foreign_key "wallets", "virtual_money_accounts"
 end

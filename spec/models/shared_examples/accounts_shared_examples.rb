@@ -1,6 +1,6 @@
-shared_examples_for 'an Account subtype' do |elements|
+shared_examples_for 'an AccountingModule::Account subtype' do |elements|
   let(:contra) { false }
-  let(:account) { FactoryBot.create(elements[:kind], contra: contra)}
+  let(:account) { create(elements[:kind], contra: contra)}
   subject { account }
 
   describe "class methods" do
@@ -38,7 +38,7 @@ shared_examples_for 'an Account subtype' do |elements|
   end
 
   describe "when given a debit" do
-    before { FactoryBot.create(:debit_amount, account: account) }
+    before { create(:debit_amount, account: account) }
 
     describe "on a contra account" do
       let(:contra) { true }
@@ -47,7 +47,7 @@ shared_examples_for 'an Account subtype' do |elements|
   end
 
   describe "when given a credit" do
-    before { FactoryBot.create(:credit_amount, account: account) }
+    before { create(:credit_amount, account: account) }
 
     describe "on a contra account" do
       let(:contra) { true }
