@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_01_235657) do
+ActiveRecord::Schema.define(version: 2020_11_02_102717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(version: 2020_11_01_235657) do
     t.string "account_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.uuid "credential_id", null: false
+    t.index ["credential_id"], name: "index_agents_on_credential_id"
   end
 
   create_table "amounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -47,6 +49,27 @@ ActiveRecord::Schema.define(version: 2020_11_01_235657) do
     t.index ["entry_id", "account_id"], name: "index_amounts_on_entry_id_and_account_id"
     t.index ["entry_id"], name: "index_amounts_on_entry_id"
     t.index ["type"], name: "index_amounts_on_type"
+  end
+
+  create_table "credentials", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["confirmation_token"], name: "index_credentials_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_credentials_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_credentials_on_reset_password_token", unique: true
+    t.index ["unlock_token"], name: "index_credentials_on_unlock_token", unique: true
   end
 
   create_table "customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -108,8 +131,11 @@ ActiveRecord::Schema.define(version: 2020_11_01_235657) do
     t.uuid "commercial_document_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "origination_type", null: false
+    t.uuid "origination_id", null: false
     t.index ["commercial_document_type", "commercial_document_id"], name: "index_commercial_document_on_vouchers"
     t.index ["entry_id"], name: "index_vouchers_on_entry_id"
+    t.index ["origination_type", "origination_id"], name: "index_vouchers_on_origination_type_and_origination_id"
   end
 
   create_table "wallets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -123,6 +149,7 @@ ActiveRecord::Schema.define(version: 2020_11_01_235657) do
     t.index ["virtual_money_account_id"], name: "index_wallets_on_virtual_money_account_id"
   end
 
+  add_foreign_key "agents", "credentials"
   add_foreign_key "amounts", "accounts"
   add_foreign_key "amounts", "entries"
   add_foreign_key "virtual_money_accounts", "accounts", column: "liability_account_id"
